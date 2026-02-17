@@ -364,7 +364,7 @@ local actions = Keys.actions({
 
     -- = nbb =
     [keys.toggle_ninbot] = function()
-    -- ensure ninbot
+    -- ensure ninbot/toggle override
         if not is_ninb_ensured then
             ensure_ninjabrain()
             floating.show()
@@ -382,14 +382,6 @@ local actions = Keys.actions({
             floating.hide_after_timeout(30000)
         else
             return false
-        end
-    end,
-    -- hide ninbot on calculator reset
-    ["*-APOSTROPHE"] = function()
-        if floating.is_overridden() then
-            floating.override_off()
-        else
-            floating.hide()
         end
     end,
 
