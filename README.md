@@ -19,3 +19,4 @@ snoopy
 * Randomized snoopy backgrounds upon toggling resizes
 * Make a custom ninbot overlay using API services
 * Add [resize animations](https://github.com/char3210/resize_animation)
+* Add a toggleable oneshot crosshair
