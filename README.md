@@ -1,4 +1,5 @@
 # Soup's Waywall Config
+snoopy
 ## Features
 * 1920x1080
 * Uses Esensats' [Waywork](https://github.com/Esensats/waywork) framework
