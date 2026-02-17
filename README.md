@@ -16,4 +16,5 @@ snoopy
 * Use [RSG utils](https://github.com/arjuncgore/ww_rsg_utils) plugin
 * Implement [Lingle](https://github.com/flammablebunny/Lingle) auToMPFS, ADW, and symlinking
 * Add a snoopy crosshair and other things
+* Randomized snoopy backgrounds upon toggling resizes
 * Make a custom ninbot overlay using API services
