@@ -6,7 +6,7 @@ snoopy
 * Uses Esensats' [floating window helper](https://github.com/Esensats/waywall-floating) for Ninjabrain Bot
 * Uses Saanvi's [plug.waywall](https://github.com/its-saanvi/plug.waywall) module
 * Uses Gore's [music overlay](https://github.com/arjuncgore/ww_music_overlay) plugin for Spotify overlay and controls
-* Uses thin, tall, and overaly borders
+* Uses thin, tall, and wide resolution borders
 * Uses shaders for pie chart and text mirrors
 * Has a toggle rebind function for chatting
 
