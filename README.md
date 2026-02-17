@@ -8,6 +8,7 @@ snoopy
 * Uses Gore's [music overlay](https://github.com/arjuncgore/ww_music_overlay) plugin for Spotify overlay and controls
 * Uses thin, tall, and wide resolution borders
 * Uses shaders for pie chart and text mirrors
+* Has a normal resolution mirror for [glowdar](https://www.youtube.com/watch?v=8r4icysEvsI)
 * Has a toggle rebind function for chatting
 
 ## To-Do
