@@ -15,8 +15,9 @@ snoopy
 * Add a Paceman overlay for RSG
 * Use [RSG utils](https://github.com/arjuncgore/ww_rsg_utils) plugin
 * Implement [Lingle](https://github.com/flammablebunny/Lingle) auToMPFS, ADW, and symlinking
-* Add a snoopy crosshair and other things
-* Randomized snoopy backgrounds upon toggling resizes
+* Add a snoopy cursor
+* Add randomized snoopy backgrounds upon toggling resizes
 * Make a custom ninbot overlay using API services
 * Add [resize animations](https://github.com/char3210/resize_animation)
 * Add a toggleable oneshot crosshair
+* Redo floating ninbot behavior
