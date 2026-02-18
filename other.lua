@@ -1,3 +1,4 @@
+-- for earlier and later vesions of minecraft
 local waywall = require("waywall")
 local helpers = require("waywall.helpers")
 local plug = require("plug.init")
