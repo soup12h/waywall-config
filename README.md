@@ -21,3 +21,4 @@ snoopy
 * Add [resize animations](https://github.com/char3210/resize_animation)
 * Add a toggleable oneshot crosshair
 * Redo floating ninbot behavior
+* Add backgrounds/borders to text mirrors
