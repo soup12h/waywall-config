@@ -103,23 +103,31 @@ local config = {
     shaders = {
         ["borders"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
-            fragment = read_file(resources_folder .. "shaders/colors.glsl") .. "\n" .. read_file(resources_folder .. "shaders/borders.frag"),
+            fragment = read_file(resources_folder .. "shaders/frag/borders.frag"),
         },
         ["pie_chart"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
-            fragment = read_file(resources_folder .. "shaders/colors.glsl") .. "\n" .. read_file(resources_folder .. "shaders/pie_chart.frag"),
+            fragment = read_file(resources_folder .. "shaders/frag/pie_chart.frag"),
         },
         ["pie_border"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
-            fragment = read_file(resources_folder .. "shaders/colors.glsl") .. "\n" .. read_file(resources_folder .. "shaders/pie_border.frag"),
+            fragment = read_file(resources_folder .. "shaders/frag/pie_border.frag"),
+        },
+        ["glowdar"] = {
+            vertex = read_file(resources_folder .. "shaders/general.vert"),
+            fragment = read_file(resources_folder .. "shaders/frag/glow.frag"),
+        },
+        ["glowdar_bg"] = {
+            vertex = read_file(resources_folder .. "shaders/general.vert"),
+            fragment = read_file(resources_folder .. "shaders/frag/glow_bg.frag"),
         },
         ["text"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
-            fragment = read_file(resources_folder .. "shaders/colors.glsl") .. "\n" .. read_file(resources_folder .. "shaders/text.frag"),
+            fragment = read_file(resources_folder .. "shaders/frag/text.frag"),
         },
         ["text_bg"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
-            fragment = read_file(resources_folder .. "shaders/colors.glsl") .. "\n" .. read_file(resources_folder .. "shaders/text_bg.frag"),
+            fragment = read_file(resources_folder .. "shaders/frag/text_bg.frag"),
         },
     },
 }
@@ -135,13 +143,13 @@ local scene = Scene.SceneManager.new(waywall)
 
 -- == mirrors ==
 -- = normal =
--- blockentities
+-- blockentities (reimplement shaders soon)
 scene:register("glowdar", {
     kind = "mirror",
     options = {
         src = { x = 1827, y = 858, w = 34, h = 36 },
         dst = { x = 1667, y = 678, w = 169, h = 179 },
-        shader = "text",
+        shader = "glowdar",
     },
     groups = { "normal" },
 })
@@ -150,7 +158,7 @@ scene:register("glowdar_shadow", {
     options = {
         src = { x = 1827, y = 858, w = 34, h = 36 },
         dst = { x = 1672, y = 683, w = 169, h = 179 },
-        shader = "text_bg",
+        shader = "glowdar_bg",
     },
     groups = { "normal" },
 })
