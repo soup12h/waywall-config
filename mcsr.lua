@@ -143,7 +143,7 @@ local scene = Scene.SceneManager.new(waywall)
 
 -- == mirrors ==
 -- = normal =
--- blockentities (reimplement shaders soon)
+-- blockentities
 scene:register("glowdar", {
     kind = "mirror",
     options = {
