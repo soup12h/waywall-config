@@ -7,17 +7,16 @@ snoopy
 * Uses Gore's [music overlay](https://github.com/arjuncgore/ww_music_overlay) plugin for Spotify overlay and controls
 * Uses thin, tall, and wide resolution borders
 * Uses shaders for pie chart and text mirrors
-* Has a normal resolution block entities mirror for [glowdar](https://www.youtube.com/watch?v=8r4icysEvsI)
+* Has normal resolution spawner and chest mirrors for [glowdar](https://www.youtube.com/watch?v=8r4icysEvsI)
+* Has normal resolution pie directory mirrors to easily see pie directory numbers
 * Has a toggle rebind function for chatting
 
 ## To-Do
 * Add a Paceman overlay for RSG
 * Use [RSG utils](https://github.com/arjuncgore/ww_rsg_utils) plugin
-* Implement [Lingle](https://github.com/flammablebunny/Lingle) auToMPFS, ADW, and symlinking
 * Add a snoopy cursor
 * Add randomized snoopy backgrounds upon toggling resizes
 * Make a custom ninbot overlay using API services
 * Add [resize animations](https://github.com/char3210/resize_animation)
 * Add a toggleable oneshot crosshair
-* Redo floating ninbot behavior
 * Add backgrounds/borders to text mirrors
