@@ -1,7 +1,7 @@
 -- == imports ==
 local waywall = require("waywall")
+local waywall = require("waywall")
 local helpers = require("waywall.helpers")
-local create_floating = require("floating.floating")
 local plug = require("plug.init")
 
 local Scene = require("waywork.scene")
@@ -24,7 +24,8 @@ local java_path = "/usr/lib/jvm/java-25-openjdk/bin/java"
 local paceman_path = resources_folder .. "jars/paceman-tracker-0.7.1.jar"
 local ninbot_path = resources_folder .. "jars/Ninjabrain-Bot-1.5.1.jar"
 
--- == read helper function ==
+-- == helper functions ==
+-- = read file function for shaders =
 local read_file = function(name)
     local file = io.open(name, "r")
     if file then
@@ -35,19 +36,19 @@ local read_file = function(name)
 end
 
 -- == config variables ==
-local ninbot_anchor, ninbot_opacity = "topright", 0.9
-local normal_sens, tall_sens = 7.66600442, 0.44967824
+local ninbot_anchor, ninbot_opacity, ninbot_offset_y = "topright", 0.9, 0
+local normal_sens, tall_sens = 16, 1.07935043
 local xkb_layout = "norge"
 local keybinds = {
     enabled = {
         ["TAB"] = "F3",
         ["F3"] = "TAB",
 
-        ["E"] = "BACKSPACE",
         ["BACKSPACE"] = "E",
+        ["E"] = "BACKSPACE",
 
-        ["V"] = "HOME",
         ["HOME"] = "V",
+        ["V"] = "HOME",
 
         ["MIDDLEMOUSE"] = "RIGHTSHIFT",
         ["RIGHTSHIFT"] = "MIDDLEMOUSE",
@@ -60,11 +61,7 @@ local keybinds = {
     },
 
     disabled = {
-        ["TAB"] = "F3",
-        ["F3"] = "TAB",
-
-        ["MB5"] = "F12",
-        ["F12"] = "MB5",
+        
     }
 }
 
@@ -87,16 +84,20 @@ local keys = {
 local config = {
     input = {
         layout = xkb_layout,
-        repeat_rate = 150,
+        repeat_rate = 100,
         repeat_delay = 150,
         remaps = keybinds.enabled,
         sensitivity = normal_sens,
-        confine_pointer = false,
+        confine_pointer = true,
     },
     theme = {
         background = "#000000",
         background_png = bg_path,
-        ninb_anchor = ninbot_anchor,
+        ninb_anchor = { 
+            position = ninbot_anchor,
+            x = 0,
+            y = ninbot_offset_y,
+        },
         ninb_opacity = ninbot_opacity,
     },
     experimental = { debug = false, jit = false, tearing = false, scene_add_text = true, },
@@ -113,13 +114,21 @@ local config = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
             fragment = read_file(resources_folder .. "shaders/frag/pie_border.frag"),
         },
-        ["glowdar"] = {
+        ["spawn"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
-            fragment = read_file(resources_folder .. "shaders/frag/glow.frag"),
+            fragment = read_file(resources_folder .. "shaders/frag/spawner.frag"),
         },
-        ["glowdar_bg"] = {
+        ["spawn_bg"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
-            fragment = read_file(resources_folder .. "shaders/frag/glow_bg.frag"),
+            fragment = read_file(resources_folder .. "shaders/frag/spawner_bg.frag"),
+        },
+        ["chest"] = {
+            vertex = read_file(resources_folder .. "shaders/general.vert"),
+            fragment = read_file(resources_folder .. "shaders/frag/chest.frag"),
+        },
+        ["chest_bg"] = {
+            vertex = read_file(resources_folder .. "shaders/general.vert"),
+            fragment = read_file(resources_folder .. "shaders/frag/chest_bg.frag"),
         },
         ["text"] = {
             vertex = read_file(resources_folder .. "shaders/general.vert"),
@@ -132,36 +141,52 @@ local config = {
     },
 }
 
--- == floating controller ==
-local floating = create_floating({
-    show_floating = waywall.show_floating,
-    sleep = waywall.sleep,
-})
-
 -- == scene registry ==
 local scene = Scene.SceneManager.new(waywall)
 
 -- == mirrors ==
 -- = normal =
--- blockentities
-scene:register("glowdar", {
-    kind = "mirror",
-    options = {
-        src = { x = 1827, y = 858, w = 34, h = 36 },
-        dst = { x = 1667, y = 678, w = 169, h = 179 },
-        shader = "glowdar",
-    },
-    groups = { "normal" },
-})
-scene:register("glowdar_shadow", {
-    kind = "mirror",
-    options = {
-        src = { x = 1827, y = 858, w = 34, h = 36 },
-        dst = { x = 1672, y = 683, w = 169, h = 179 },
-        shader = "glowdar_bg",
-    },
-    groups = { "normal" },
-})
+-- spawner
+for i = 0, 3, 1 do
+    helpers.res_mirror(
+        {
+            src = { x = 1827, y = 859 + 8 * i, w = 33, h = 9 },
+            dst = { x = 1685, y = 720, w = 33 * 4, h = 9 * 4 },
+            depth = 3,
+            shader = "spawn",
+        },
+        0, 0
+    )
+    helpers.res_mirror({
+            src = { x = 1827, y = 859 + 8 * i, w = 33, h = 9 },
+            dst = { x = 1685 + 4, y = 720 + 4, w = 33 * 4, h = 9 * 4 },
+            depth = 2,
+            shader = "spawn_bg",},
+        0, 0
+    )
+end
+
+-- chest
+for i = 0, 3, 1 do
+    helpers.res_mirror( -- mob_spawner
+        {
+            src = { x = 1827, y = 859 + 8 * i, w = 33, h = 9 },
+            dst = { x = 1685, y = 755, w = 33 * 4, h = 9 * 4 },
+            depth = 3,
+            shader = "chest",
+        },
+        0, 0
+    )
+    helpers.res_mirror( -- mob_spawner
+        {
+            src = { x = 1827, y = 859 + 8 * i, w = 33, h = 9 },
+            dst = { x = 1685 + 4, y = 755 + 4, w = 33 * 4, h = 9 * 4 },
+            depth = 2,
+            shader = "chest_bg",
+        },
+        0, 0
+    )
+end
 
 -- = thin =
 -- c and e counter
@@ -225,7 +250,7 @@ scene:register("pitch_yaw_shadow", {
 })
 
 -- pie
-scene:register("pie", {
+scene:register("pie_thin", {
     kind = "mirror",
     options = {
         src = { x = 0, y = 674, w = 340, h = 178},
@@ -235,7 +260,7 @@ scene:register("pie", {
     },
     groups = { "thin" },
 })
-scene:register("pie_border", {
+scene:register("pie_border_thin", {
     kind = "mirror",
     options = {
         src = { x = 0, y = 674, w = 340, h = 178},
@@ -247,7 +272,7 @@ scene:register("pie_border", {
 })
 
 -- pie percentages
-scene:register("percentages", {
+scene:register("percentages_thin", {
     kind = "mirror",
     options = {
         src = { x = 247, y = 859, w = 33, h = 25 },
@@ -256,7 +281,7 @@ scene:register("percentages", {
     },
     groups = { "thin" },
 })
-scene:register("percentages_shadow", {
+scene:register("percentages_shadow_thin", {
     kind = "mirror",
     options = {
         src = { x = 247, y = 859, w = 33, h = 25 },
@@ -277,6 +302,48 @@ scene:register("eye_measure", {
     groups = { "tall" },
 })
 
+-- pie
+scene:register("pie_tall", {
+    kind = "mirror",
+    options = {
+        src = { x = 44, y = 15978, w = 340, h = 178},
+        dst = { x = 1225, y = 650, w = 315, h = 317.25 },
+        depth = 2,
+        shader = "pie_chart",
+    },
+    groups = { "tall" },
+})
+scene:register("pie_border_tall", {
+    kind = "mirror",
+    options = {
+        src = { x = 44, y = 15978, w = 33, h = 25},
+        dst = { x = 1220, y = 645, w = 325, h = 327.25 },
+        depth = 1,
+        shader = "pie_border",
+    },
+    groups = { "tall" },
+})
+
+-- pie percentages
+scene:register("percentages_tall", {
+    kind = "mirror",
+    options = {
+        src = { x = 291, y = 16163, w = 33, h = 25 },
+        dst = { x = 1550, y = 750, w = 132, h = 100 },
+        shader = "text",
+    },
+    groups = { "tall" },
+})
+scene:register("percentages_shadow_tall", {
+    kind = "mirror",
+    options = {
+        src = { x = 291, y = 16163, w = 33, h = 25 },
+        dst = { x = 1553, y = 753, w = 132, h = 100 },
+        shader = "text_bg",
+    },
+    groups = { "tall" },
+})
+
 -- eye measure overlay
 scene:register("eye_overlay", {
     kind = "image",
@@ -284,6 +351,119 @@ scene:register("eye_overlay", {
     options = { dst  = { x = 30, y = 340, w = 700, h = 400 } },
     groups = { "tall" },
 })
+
+-- = pie dir display =
+local pie_dst_2 = { x = 1811, y = 1013, w = 98, h = 53 }
+local pie_dst_2_sh = { x = 1803, y = 1005, w = 113, h = 68 }
+local pie_dst_1 = { x = 1698, y = 1013, w = 98, h = 53 }
+local pie_dst_1_sh = { x = 1691, y = 1005, w = 113, h = 68 }
+local yMultConstant = 8
+-- tick
+for i = 0, 6, 1 do
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 13, h = 7 },
+		dst = pie_dst_2,
+		depth = 3,
+		color_key = { input = "#6543CA", output = "#6543CA" },
+	}, 0, 0)
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 1, h = 1 },
+		dst = pie_dst_2_sh,
+		depth = 2,
+		color_key = { input = "#6543CA", output = "#000000" },
+	}, 0, 0)
+end
+-- level
+for i = 0, 6, 1 do
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 13, h = 7 },
+		dst = pie_dst_2,
+		depth = 3,
+		color_key = { input = "#63cbc2", output = "#63cbc2" },
+	}, 0, 0)
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 1, h = 1 },
+		dst = pie_dst_2_sh,
+		depth = 2,
+		color_key = { input = "#63cbc2", output = "#000000" },
+	}, 0, 0)
+end
+-- entities
+for i = 0, 6, 1 do
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 13, h = 7 },
+		dst = pie_dst_2,
+		depth = 5,
+		color_key = { input = "#e145c2", output = "#e145c2" },
+	}, 0, 0)
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 1, h = 1 },
+		dst = pie_dst_2_sh,
+		depth = 4,
+		color_key = { input = "#e145c2", output = "#000000" },
+	}, 0, 0)
+end
+-- blockEntities
+for i = 0, 6, 1 do
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 13, h = 7 },
+		dst = pie_dst_2,
+		depth = 5,
+		color_key = { input = "#c4c46d", output = "#c4c46d" },
+	}, 0, 0)
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 1, h = 1 },
+		dst = pie_dst_2_sh,
+		depth = 4,
+		color_key = { input = "#c4c46d", output = "#000000" },
+	}, 0, 0)
+end
+
+-- gameRenderer
+for i = 0, 6, 1 do
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 13, h = 7 },
+		dst = pie_dst_1,
+		depth = 5,
+		color_key = { input = "#c2cbc2", output = "#c2cbc2" },
+	}, 0, 0)
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 1, h = 1 },
+		dst = pie_dst_1_sh,
+		depth = 4,
+		color_key = { input = "#c2cbc2", output = "#000000" },
+	}, 0, 0)
+end
+-- level
+for i = 0, 6, 1 do
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 13, h = 7 },
+		dst = pie_dst_1,
+		depth = 3,
+		color_key = { input = "#63cbc2", output = "#63cbc2" },
+	}, 0, 0)
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 1, h = 1 },
+		dst = pie_dst_1_sh,
+		depth = 2,
+		color_key = { input = "#63cbc2", output = "#000000" },
+	}, 0, 0)
+end
+-- entities
+for i = 0, 6, 1 do
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 13, h = 7 },
+		dst = pie_dst_1,
+		depth = 5,
+		color_key = { input = "#e145c2", output = "#e145c2" },
+	}, 0, 0)
+	helpers.res_mirror({
+		src = { x = 1590, y = 860 + yMultConstant * i, w = 1, h = 1 },
+		dst = pie_dst_1_sh,
+		depth = 4,
+		color_key = { input = "#e145c2", output = "#000000" },
+	}, 0, 0)
+end
 
 -- = res borders =
 for _, name in ipairs({ "wide", "thin", "tall" }) do
@@ -298,11 +478,6 @@ end
 
 -- == modes ==
 local mode_manager = Modes.ModeManager.new(waywall)
-
-mode_manager:define("normal", {
-    width = 1920,
-    height = 1080,
-})
 
 mode_manager:define("thin", {
     width = 340,
@@ -363,9 +538,9 @@ local remaps_text = nil
 -- == config actions ==
 local actions = Keys.actions({
     -- = mode toggles ==
-    [keys.thin] = function() return mode_manager:toggle("thin") end,
-    [keys.tall] = function() return mode_manager:toggle("tall") end,
-    [keys.wide] = function() return mode_manager:toggle("wide") end,
+    [keys.thin] = helpers.ingame_only(function() return mode_manager:toggle("thin") end),
+    [keys.tall] = helpers.ingame_only(function() return mode_manager:toggle("tall") end),
+    [keys.wide] = helpers.ingame_only(function() return mode_manager:toggle("wide") end),
 
     -- = fullscreen toggle =
     [keys.fullscreen] = waywall.toggle_fullscreen,
@@ -375,22 +550,24 @@ local actions = Keys.actions({
     -- ensure ninbot/toggle override
         if not is_ninb_ensured then
             ensure_ninjabrain()
-            floating.show()
-            floating.hide_after_timeout(5000)
-            is_ninb_ensured = true
+            waywall.show_floating(true)
         else
-            floating.override_toggle()
+            helpers.toggle_floating()
         end
     end,
-    -- temporarily show ninbot on F3+C
+    -- show ninbot on F3+C
     ["*-C"] = function()
         if waywall.get_key("F3") then
-            waywall.press_key("C")
-            floating.show()
-            floating.hide_after_timeout(30000)
+            waywall.show_floating(true)
+            return false
         else
             return false
         end
+    end,
+    -- hide ninbot on F3+C
+    ["APOSTROPHE"] = function()
+        waywall.show_floating(false)
+        return false
     end,
 
     -- = paceman =
@@ -425,5 +602,6 @@ plug.setup({
     config = config,
     path = "~/.config/waywall/plugins/",
 })
+require("waywordle.init").setup(config)
 
 return config
