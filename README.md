@@ -1,6 +1,6 @@
 # Soup's Waywall Config
 
-[!CAUTION] As of June 2026, this config will most likely be illegal for use, due to the new ruleset on filter usage in waywall and ToolScreen proposed by the SRC mods.
+WARNING: As of June 2026, this config will most likely be illegal for use, due to the new ruleset on filter usage in waywall and ToolScreen proposed by the SRC mods.
 
 snoopy
 ## Features
